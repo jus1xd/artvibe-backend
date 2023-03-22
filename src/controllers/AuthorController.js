@@ -6,7 +6,7 @@ class AuthorController {
     try {
       const author = await Author.create(
         req.body,
-        // req.files.image
+        req.files.image
       );
       res.json(author);
     } catch (e) {
