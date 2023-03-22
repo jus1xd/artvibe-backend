@@ -1,8 +1,13 @@
 import Author from "../models/Author.js";
+import fileService from "./fileService.js";
 
 class AuthorService {
-  async create(author) {
-    const createdAuthor = await Author.create(author);
+  async create(author, image) {
+    const fileName = fileService.saveFile(image);
+    const createdAuthor = await Author.create(
+      author
+      // fileName
+    );
     return createdAuthor;
   }
 

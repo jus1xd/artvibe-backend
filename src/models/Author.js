@@ -6,10 +6,11 @@ const Author = new mongoose.Schema({
     required: true,
   },
   birthdate: {
-    type: Date,
+    type: String,
+    required: true,
   },
   deathdate: {
-    type: Date,
+    type: String,
   },
   country: {
     type: String,

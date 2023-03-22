@@ -11,7 +11,6 @@ const Picture = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: true,
   },
   year: {
     type: Number,
@@ -23,7 +22,6 @@ const Picture = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
   },
 });
 
