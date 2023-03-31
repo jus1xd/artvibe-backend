@@ -1,8 +1,13 @@
 import Picture from "../models/Picture.js";
+import fileService from "./fileService.js";
 
 class PictureService {
-  async create(picture) {
-    const createdPicture = await Picture.create(picture);
+  async create(picture, image) {
+    const fileName = fileService.saveFile(image);
+    const createdPicture = await Picture.create({
+      ...picture,
+      image: fileName,
+    });
     return createdPicture;
   }
 
@@ -23,9 +28,13 @@ class PictureService {
     if (!picture._id) {
       throw new Error("ID не указан");
     }
-    const updatedPicture = await Picture.findByIdAndUpdate(picture._id, picture, {
-      new: true,
-    });
+    const updatedPicture = await Picture.findByIdAndUpdate(
+      picture._id,
+      picture,
+      {
+        new: true,
+      }
+    );
     return updatedPicture;
   }
 

@@ -4,10 +4,7 @@ import AuthorService from "../services/AuthorService.js";
 class AuthorController {
   async create(req, res) {
     try {
-      const author = await Author.create(
-        req.body,
-        req.files.image
-      );
+      const author = await AuthorService.create(req.body, req.files.image);
       res.json(author);
     } catch (e) {
       res.status(500).json(e);

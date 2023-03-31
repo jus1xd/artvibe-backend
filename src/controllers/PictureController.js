@@ -4,7 +4,7 @@ import PictureService from "../services/PictureService.js";
 class PictureController {
   async create(req, res) {
     try {
-      const picture = await Picture.create(req.body);
+      const picture = await PictureService.create(req.body, req.files.image);
       res.json(picture);
     } catch (e) {
       res.status(500).json(e);
@@ -22,7 +22,7 @@ class PictureController {
 
   async getOne(req, res) {
     try {
-      const picture = await PictureService.getOne(req.params.id)
+      const picture = await PictureService.getOne(req.params.id);
       res.json(picture);
     } catch (e) {
       res.status(500).json(e);
@@ -41,7 +41,7 @@ class PictureController {
   async delete(req, res) {
     try {
       const picture = await Picture.findByIdAndDelete(req.params.id);
-      res.status(200).json({message: "Картина удалена"});
+      res.status(200).json({ message: "Картина удалена" });
     } catch (e) {
       res.status(500).json(e.message);
     }

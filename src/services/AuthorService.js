@@ -4,7 +4,10 @@ import fileService from "./fileService.js";
 class AuthorService {
   async create(author, image) {
     const fileName = fileService.saveFile(image);
-    const createdAuthor = await Author.create({ ...author, image: fileName });
+    const createdAuthor = await Author.create({ 
+      ...author, 
+      image: fileName 
+    });
     return createdAuthor;
   }
 
