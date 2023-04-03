@@ -1,3 +1,4 @@
+// pre-alpha dev version 0.0.1
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -13,11 +14,9 @@ const DB_URL =
 const app = express();
 
 app.use(express.json());
-// app.use(express.static(path.resolve(__dirname, "static")));
 app.use(express.static("static"));
 app.use(fileUpload({}));
 app.use("/api", router);
-// app.use(cors());
 
 async function startApp() {
   try {
