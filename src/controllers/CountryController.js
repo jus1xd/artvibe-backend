@@ -41,7 +41,7 @@ class CountryController {
   async delete(req, res) {
     try {
       const country = await Country.findByIdAndDelete(req.params.id);
-      res.status(200).json({ message: "Картина удалена" });
+      res.status(200).json({ message: "Страна удалена" });
     } catch (e) {
       res.status(500).json(e.message);
     }
