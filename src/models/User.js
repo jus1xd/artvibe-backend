@@ -19,6 +19,26 @@ const User = new mongoose.Schema({
     type: String,
     required: true,
   },
+  friends: [
+    {
+      idOfFriend: String,
+      name: String,
+      avatar: String,
+      messages: [
+        {
+          text: String,
+          date: String,
+          senderId: String, // Идентификатор отправителя сообщения
+          senderName: String, // Имя отправителя сообщения
+          senderAvatar: String, // Аватар отправителя сообщения
+        },
+      ],
+    },
+  ],
+  avatar: {
+    type: String,
+    default: "",
+  },
   role: {
     type: String,
     required: true,

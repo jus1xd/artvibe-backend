@@ -3,9 +3,11 @@ import AuthController from "./controllers/AuthController.js";
 import AuthorController from "./controllers/AuthorController.js";
 import CountryController from "./controllers/CountryController.js";
 import PictureController from "./controllers/PictureController.js";
+import UserController from "./controllers/UserController.js";
 
-import {roleMiddleware} from "./middleware/roleMiddleware.js";
+import { roleMiddleware } from "./middleware/roleMiddleware.js";
 import { check } from "express-validator";
+
 
 const router = new Router();
 
@@ -30,6 +32,14 @@ router.get("/countries/:id", CountryController.getOne);
 router.put("/countries", CountryController.update);
 router.delete("/countries/:id", CountryController.delete);
 
+// эндпоинты для пользователей
+router.post("/friends", UserController.getFriends);
+router.post("/add-friend", UserController.addFriend);
+router.delete("/remove-friend", UserController.removeFriend);
+// тут эндопоинты для сообщений
+router.post("/conversation/", UserController.getMessagesWithSenderInfo);
+router.post("/send-message/:id", UserController.sendMessage);
+
 // эндпоинты для авторизации и регистрации
 router.post(
   "/registration",
@@ -52,15 +62,13 @@ router.post(
   "/login",
   [
     check("email", "Введите корректную почту").isEmail(),
-    check(
-      "password",
-      "Пароль не может быть пустым"
-    ).notEmpty(),
+    check("password", "Пароль не может быть пустым").notEmpty(),
   ],
   AuthController.login
 );
 
 router.get("/users", roleMiddleware("admin"), AuthController.getAll);
+router.get("/peoples", UserController.getAllPeoples);
 router.delete("/users/:id", AuthController.delete);
 
 export default router;

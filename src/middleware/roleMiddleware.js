@@ -14,7 +14,7 @@ export function roleMiddleware(role) {
       }
       const { roles: userRole } = jwt.verify(token, secret);
       let hasRole = false;
-      userRole.includes(role) ? hasRole = true : false
+      userRole.includes(role) ? (hasRole = true) : false;
       if (!hasRole) {
         return res.status(403).json({ message: "У вас нет доступа" });
       }
