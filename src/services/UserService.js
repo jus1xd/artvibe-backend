@@ -98,9 +98,56 @@ class UserService {
     }
   }
 
+  async getAllPeoples() {
+    try {
+      const peoples = await User.find();
+
+      const allPeoples = peoples.map((people) => ({
+        _id: people._id,
+        name: people.name,
+        username: people.username,
+        avatar: people.avatar,
+      }));
+
+      return allPeoples;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateUserCover(userId, pageCover) {
+    try {
+      const currentUser = await User.findById(userId);
+
+      console.log("userId on service", userId);
+
+      if (!currentUser) {
+        throw new Error("Пользователь не найден");
+      }
+
+      currentUser.pageCover = pageCover;
+      await currentUser.save();
+      return currentUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUserById(userId) {
+    try {
+      const currentUser = await User.findById(userId).select(
+        "-password -email"
+      ); // Исключаем поля с паролем и почтой
+      return currentUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getMessagesWithSenderInfo(id, friendId) {
     try {
       const currentUser = await User.findById(id);
+      const friendUser = await User.findById(friendId);
       if (!currentUser) {
         throw new Error("Пользователь не найден");
       }
@@ -121,6 +168,8 @@ class UserService {
         text: message.text,
         date: message.date,
         friendId: friendId,
+        friendName: friendUser.name, // Добавляем friendName
+        friendAvatar: friendUser.avatar, // Добавляем friendAvatar
         senderId: message.senderId,
         senderName: message.senderName,
         senderAvatar: message.senderAvatar,
@@ -131,44 +180,6 @@ class UserService {
       throw error;
     }
   }
-
-  // async sendMessage(id, friendId, messageText) {
-  //   try {
-  //     const currentUser = await User.findById(id);
-  //     const friendUser = await User.findById(friendId);
-
-  //     if (!currentUser || !friendUser) {
-  //       throw new Error("Пользователь не найден");
-  //     }
-
-  //     const currentUserFriendIndex = currentUser.friends.findIndex(
-  //       (friend) => friend._id.toString() === friendId
-  //     );
-  //     const friendUserFriendIndex = friendUser.friends.findIndex(
-  //       (friend) => friend._id.toString() === id
-  //     );
-
-  //     if (currentUserFriendIndex === -1 || friendUserFriendIndex === -1) {
-  //       throw new Error("Пользователь не является другом");
-  //     }
-
-  //     const newMessage = {
-  //       text: messageText,
-  //       date: new Date().toISOString(),
-  //       senderId: id,
-  //     };
-
-  //     currentUser.friends[currentUserFriendIndex].messages.push(newMessage);
-  //     friendUser.friends[friendUserFriendIndex].messages.push(newMessage);
-
-  //     await currentUser.save();
-  //     await friendUser.save();
-
-  //     return newMessage;
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 
   async sendMessage(id, friendId, messageText) {
     try {
@@ -194,6 +205,9 @@ class UserService {
         _id: new mongoose.Types.ObjectId(), // Генерируем новый _id
         text: messageText,
         date: new Date().toISOString(),
+        friendId: friendId,
+        friendName: friendUser.name, // Добавляем friendName
+        friendAvatar: friendUser.avatar, // Добавляем friendAvatar
         senderId: id,
         senderName: currentUser.name, // Добавляем senderName
         senderAvatar: currentUser.avatar, // Добавляем senderAvatar

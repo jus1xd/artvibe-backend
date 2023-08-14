@@ -8,7 +8,6 @@ import UserController from "./controllers/UserController.js";
 import { roleMiddleware } from "./middleware/roleMiddleware.js";
 import { check } from "express-validator";
 
-
 const router = new Router();
 
 // эндпоинты для авторов
@@ -34,6 +33,8 @@ router.delete("/countries/:id", CountryController.delete);
 
 // эндпоинты для пользователей
 router.post("/friends", UserController.getFriends);
+router.get("/user/:id", UserController.getUserById);
+router.post("/user-cover", UserController.updateUserCover);
 router.post("/add-friend", UserController.addFriend);
 router.delete("/remove-friend", UserController.removeFriend);
 // тут эндопоинты для сообщений

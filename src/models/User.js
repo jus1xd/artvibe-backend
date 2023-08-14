@@ -37,7 +37,11 @@ const User = new mongoose.Schema({
   ],
   avatar: {
     type: String,
-    default: "",
+    required: true,
+  },
+  pageCover: {
+    type: String,
+    required: false,
   },
   role: {
     type: String,

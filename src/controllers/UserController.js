@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import UserService from "../services/UserService.js";
 
 import { io } from "../../index.js";
+import fileService from "../services/fileService.js";
 
 class UserController {
   async addFriend(req, res) {
@@ -38,9 +39,54 @@ class UserController {
 
   async getAllPeoples(req, res) {
     try {
-      const users = await User.find();
-      res.json(users);
-    } catch (e) {}
+      const peoples = await UserService.getAllPeoples();
+      res.json(peoples);
+    } catch (error) {
+      res.status(500).json(error.message);
+    }
+  }
+
+  async updateUserCover(req, res) {
+    const userId = req.body.id;
+
+    try {
+      const pageCover = await fileService.saveFile(req.files.pageCover); // Предполагаем метод загрузки файла в FileService
+
+      const updatedUser = await UserService.updateUserCover(userId, pageCover);
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "Пользователь не найден11" });
+      }
+
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        message: "Произошла ошибка при обновлении данных пользователя",
+      });
+    }
+  }
+
+  async getUserById(req, res) {
+    const userId = req.params.id;
+
+    try {
+      const user = await UserService.getUserById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      // Исключаем поля с паролем и почтой
+      const { password, email, ...userWithoutSensitiveInfo } = user.toObject();
+
+      return res.status(200).json(userWithoutSensitiveInfo);
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(500)
+        .json({ message: "Произошла ошибка при получении пользователя" });
+    }
   }
 
   async getMessagesWithSenderInfo(req, res) {

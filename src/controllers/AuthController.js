@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 import { secret } from "../config.js";
+import fileService from "../services/fileService.js";
 
 const generateAccessToken = (id, username, roles) => {
   const payload = {
@@ -10,7 +11,7 @@ const generateAccessToken = (id, username, roles) => {
     username,
     roles,
   };
-  return jwt.sign(payload, secret, { expiresIn: "24h" });
+  return jwt.sign(payload, secret, { expiresIn: "99999999d" });
 };
 
 class AuthController {
@@ -23,6 +24,9 @@ class AuthController {
           .json({ message: "Ошибка при регистрации", errors });
       }
       const { name, email, username, password } = req.body;
+
+      const avatar = fileService.saveFile(req.files.avatar);
+
       const candidate = await User.findOne({ email });
       if (candidate) {
         return res
@@ -32,8 +36,10 @@ class AuthController {
       const hashPassword = bcrypt.hashSync(password, 7);
       const user = new User({
         name,
+        avatar: avatar,
         email,
         username,
+        friends,
         password: hashPassword,
         role: "user",
       });
@@ -51,9 +57,7 @@ class AuthController {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        return res
-          .status(400)
-          .json({ message: `Почта не зарегистрирована` });
+        return res.status(400).json({ message: `Почта не зарегистрирована` });
       }
       const validPassword = bcrypt.compareSync(password, user.password);
       if (!validPassword) {
