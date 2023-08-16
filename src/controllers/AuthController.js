@@ -39,7 +39,7 @@ class AuthController {
         avatar: avatar,
         email,
         username,
-        friends,
+        friends: [],
         password: hashPassword,
         role: "user",
       });
