@@ -1,13 +1,11 @@
 // pre-alpha dev version 0.0.1
 import express from "express";
-import http from "http";
 import mongoose from "mongoose";
 import cors from "cors";
 import router from "./src/router.js";
 import fileUpload from "express-fileupload";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import UserController from "./src/controllers/UserController.js";
 
 // constants
 const PORT = 5003;
@@ -19,7 +17,7 @@ const app = express();
 // creating socket.io server and passing express server to it
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:3000" },
+  cors: { origin: "*" },
 });
 
 app.use(cors());

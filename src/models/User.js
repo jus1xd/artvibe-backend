@@ -37,7 +37,7 @@ const User = new mongoose.Schema({
   ],
   avatar: {
     type: String,
-    required: true,
+    default: "",
   },
   pageCover: {
     type: String,

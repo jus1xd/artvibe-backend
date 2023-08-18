@@ -25,7 +25,13 @@ class AuthController {
       }
       const { name, email, username, password } = req.body;
 
-      const avatar = fileService.saveFile(req.files.avatar);
+      let avatar = "";
+
+      console.log(req.files);
+
+      if (req.files !== null) {
+        avatar = fileService.saveFile(req.files.avatar);
+      }
 
       const candidate = await User.findOne({ email });
       if (candidate) {
@@ -37,6 +43,7 @@ class AuthController {
       const user = new User({
         name,
         avatar: avatar,
+        city: "Stary Oscol",
         email,
         username,
         friends: [],
