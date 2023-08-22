@@ -19,6 +19,18 @@ const User = new mongoose.Schema({
     type: String,
     required: true,
   },
+  city: {
+    type: String,
+    default: "",
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  status: {
+    type: String,
+    default: "",
+  },
   friends: [
     {
       idOfFriend: String,

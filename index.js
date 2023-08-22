@@ -7,6 +7,9 @@ import fileUpload from "express-fileupload";
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+import jwt from "jsonwebtoken";
+import { secret } from "./src/config.js";
+
 // constants
 const PORT = 5003;
 const DB_URL =
@@ -17,7 +20,7 @@ const app = express();
 // creating socket.io server and passing express server to it
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
-  cors: { origin: "*" },
+  cors: { origin: "http://localhost:3000" || "https://artvibe.space" },
 });
 
 app.use(cors());
@@ -28,11 +31,20 @@ app.use("/api", router);
 
 // socket.io connection
 io.on("connection", (socket) => {
-  console.log("User connected");
+  if (socket.handshake.auth.token) {
+    const token = jwt.verify(socket.handshake.auth.token, secret);
+    console.log(token.username, "connected");
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+    socket.on("disconnect", () => {
+      console.log(token.username, "disconnected");
+    });
+  } else {
+    console.log("Guest connected");
+
+    socket.on("disconnect", () => {
+      console.log("Guest disconnected");
+    });
+  }
 });
 
 // starting server
