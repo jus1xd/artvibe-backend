@@ -107,6 +107,7 @@ class UserService {
         name: people.name,
         username: people.username,
         avatar: people.avatar,
+        isOnline: people.isOnline,
       }));
 
       return allPeoples;
@@ -220,6 +221,21 @@ class UserService {
       await friendUser.save();
 
       return newMessage;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async toggleOnlineStatus(userId, isOnline) {
+    try {
+      const currentUser = await User.findById(userId);
+
+      if (!currentUser) {
+        throw new Error("Пользователь не найден");
+      }
+
+      currentUser.isOnline = isOnline;
+      await currentUser.save();
     } catch (error) {
       throw error;
     }

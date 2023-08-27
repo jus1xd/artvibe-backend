@@ -7,6 +7,7 @@ import UserController from "./controllers/UserController.js";
 
 import { roleMiddleware } from "./middleware/roleMiddleware.js";
 import { check } from "express-validator";
+import PostController from "./controllers/PostController.js";
 
 const router = new Router();
 
@@ -40,6 +41,9 @@ router.delete("/remove-friend", UserController.removeFriend);
 // тут эндопоинты для сообщений
 router.post("/conversation/", UserController.getMessagesWithSenderInfo);
 router.post("/send-message/:id", UserController.sendMessage);
+// тут эндопоинты для постов
+router.post("/create-post", PostController.createPost);
+router.delete("/delete-post", PostController.deletePost);
 
 // эндпоинты для авторизации и регистрации
 router.post(
