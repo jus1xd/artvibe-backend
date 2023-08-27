@@ -20,7 +20,7 @@ const app = express();
 // creating socket.io server and passing express server to it
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
-  cors: { origin: "http://localhost:3000" || "https://artvibe.space" },
+  cors: { origin: "https://artvibe.space" },
 });
 
 app.use(cors());
