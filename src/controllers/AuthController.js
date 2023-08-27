@@ -27,8 +27,6 @@ class AuthController {
 
       let avatar = "";
 
-      console.log(req.files);
-
       if (req.files !== null) {
         avatar = fileService.saveFile(req.files.avatar);
       }
@@ -44,6 +42,7 @@ class AuthController {
         name,
         avatar: avatar,
         city: "Stary Oscol",
+        isOnline,
         email,
         username,
         friends: [],

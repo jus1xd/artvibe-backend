@@ -31,6 +31,10 @@ const User = new mongoose.Schema({
     type: String,
     default: "",
   },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
   friends: [
     {
       idOfFriend: String,
@@ -43,6 +47,26 @@ const User = new mongoose.Schema({
           senderId: String, // Идентификатор отправителя сообщения
           senderName: String, // Имя отправителя сообщения
           senderAvatar: String, // Аватар отправителя сообщения
+        },
+      ],
+    },
+  ],
+  posts: [
+    {
+      text: { type: String, default: "" },
+      pictures: { type: String, default: "" },
+      authorId: { type: String, required: true },
+      authorName: { type: String, required: true },
+      authorAvatar: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now },
+      likes: { type: Number, default: 0 },
+      comments: [
+        {
+          text: { type: String, default: "" },
+          authorId: { type: String, required: true },
+          authorName: { type: String, required: true },
+          authorAvatar: { type: String, required: true },
+          createdAt: { type: Date, default: Date.now },
         },
       ],
     },

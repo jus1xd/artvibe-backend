@@ -9,6 +9,7 @@ import { Server } from "socket.io";
 
 import jwt from "jsonwebtoken";
 import { secret } from "./src/config.js";
+import UserService from "./src/services/UserService.js";
 
 // constants
 const PORT = 5003;
@@ -33,9 +34,12 @@ app.use("/api", router);
 io.on("connection", (socket) => {
   if (socket.handshake.auth.token) {
     const token = jwt.verify(socket.handshake.auth.token, secret);
+
+    UserService.toggleOnlineStatus(token.id, true);
     console.log(token.username, "connected");
 
     socket.on("disconnect", () => {
+      UserService.toggleOnlineStatus(token.id, false);
       console.log(token.username, "disconnected");
     });
   } else {
