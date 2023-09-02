@@ -42,7 +42,7 @@ class AuthController {
         name,
         avatar: avatar,
         city: "Stary Oscol",
-        isOnline,
+        isOnline: false,
         email,
         username,
         friends: [],
