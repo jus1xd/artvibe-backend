@@ -6,7 +6,7 @@ import router from "./src/router.js";
 import fileUpload from "express-fileupload";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import 'dotenv/config'
+import "dotenv/config";
 
 import jwt from "jsonwebtoken";
 import { secret } from "./src/config.js";
@@ -14,7 +14,7 @@ import UserService from "./src/services/UserService.js";
 
 // constants
 const PORT = 5003;
-const DB_URL = process.env.DB_CONNECT
+const DB_URL = process.env.DB_CONNECT;
 const app = express();
 
 // creating socket.io server and passing express server to it
