@@ -44,6 +44,8 @@ router.post("/send-message/:id", UserController.sendMessage);
 // тут эндопоинты для постов
 router.post("/create-post", PostController.createPost);
 router.delete("/delete-post", PostController.deletePost);
+router.post("/like-post", PostController.likePost);
+router.post("/comment-post", PostController.addComment);
 
 // эндпоинты для авторизации и регистрации
 router.post(

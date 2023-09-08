@@ -17,13 +17,46 @@ class PostController {
     const { originId, postId, userId } = req.body;
 
     try {
-      const user = await PostService.deletePost(originId, postId, userId);
+      const post = await PostService.deletePost(originId, postId, userId);
 
-      return res.status(200).json({ message: "Пост успешно удален", user });
+      return res.status(200).json({ message: "Пост успешно удален", post });
     } catch (error) {
       return res
         .status(500)
         .json({ message: "Произошла ошибка при удалении поста", error });
+    }
+  }
+
+  async likePost(req, res) {
+    const { originId, postId, userId } = req.body;
+
+    try {
+      const post = await PostService.likePost(originId, postId, userId);
+
+      return res.status(200).json();
+    } catch (error) {
+      return res.status(500).json("Произошла ошибка при оценке поста");
+    }
+  }
+
+  async addComment(req, res) {
+    const { originId, postId, userId, text } = req.body;
+    const pictures = req.files ? req.files.pictures : null;
+
+    try {
+      const comment = await PostService.addComment(
+        originId,
+        postId,
+        userId,
+        text,
+        pictures
+      );
+
+      return res.status(200).json(comment);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: "Произошла ошибка при создания комментария", error });
     }
   }
 

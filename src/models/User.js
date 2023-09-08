@@ -59,13 +59,19 @@ const User = new mongoose.Schema({
       authorName: { type: String, required: true },
       authorAvatar: { type: String, required: true },
       createdAt: { type: Date, default: Date.now },
-      likes: { type: Number, default: 0 },
+      likes: [
+        {
+          userId: { type: String },
+          userName: { type: String },
+        },
+      ],
       comments: [
         {
           text: { type: String, default: "" },
-          authorId: { type: String, required: true },
-          authorName: { type: String, required: true },
-          authorAvatar: { type: String, required: true },
+          pictures: { type: String, default: "" },
+          userId: { type: String, required: true },
+          userName: { type: String, required: true },
+          userAvatar: { type: String, required: true },
           createdAt: { type: Date, default: Date.now },
         },
       ],
