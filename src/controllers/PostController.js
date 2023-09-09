@@ -9,7 +9,8 @@ class PostController {
       const post = await PostService.createPost(id, text, pictures, authorId);
       res.status(201).json(post);
     } catch (error) {
-      res.status(500).json({ error: "Could not create post" });
+      console.log(error)
+      res.status(500).json({ message: "Ошибка при создании поста" }, error);
     }
   }
 

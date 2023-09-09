@@ -39,8 +39,8 @@ router.post("/user-cover", UserController.updateUserCover);
 router.post("/add-friend", UserController.addFriend);
 router.delete("/remove-friend", UserController.removeFriend);
 // тут эндопоинты для сообщений
-router.post("/conversation/", UserController.getMessagesWithSenderInfo);
-router.post("/send-message/:id", UserController.sendMessage);
+router.post("/conversation", UserController.getMessagesWithSenderInfo);
+router.post("/send-message", UserController.sendMessage);
 // тут эндопоинты для постов
 router.post("/create-post", PostController.createPost);
 router.delete("/delete-post", PostController.deletePost);

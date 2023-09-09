@@ -102,9 +102,17 @@ class UserController {
 
   async sendMessage(req, res) {
     try {
-      const { id } = req.params;
-      const { friendId, messageText } = req.body;
-      const message = await UserService.sendMessage(id, friendId, messageText);
+      const { clientId, friendId, messageText } = req.body;
+      const pictures = await fileService.saveFile(
+        req.files ? req.files.pictures : ""
+      );
+
+      const message = await UserService.sendMessage(
+        clientId,
+        friendId,
+        messageText,
+        pictures
+      );
 
       io.emit("sendMessage", message); // Отправить сообщение всем подключенным клиентам
 

@@ -6,7 +6,13 @@ class PostService {
     const originUser = await User.findById(originId);
     const authorUser = await User.findById(authorId);
 
-    const postPictures = await fileService.saveFile(pictures);
+    let postPictures;
+
+    if (pictures) {
+      postPictures = fileService.saveFile(pictures);
+    } else {
+      postPictures = "";
+    }
 
     if (!originUser) {
       throw new Error("Origin user not found");
@@ -104,7 +110,13 @@ class PostService {
       const originUser = await User.findById(originId);
       const commentByUser = await User.findById(userId);
 
-      const commentPictures = await fileService.saveFile(pictures);
+      let commentPictures;
+
+      if (pictures) {
+        commentPictures = fileService.saveFile(pictures);
+      } else {
+        commentPictures = "";
+      }
 
       if (!originUser) {
         throw new Error("Пользователь не найден");

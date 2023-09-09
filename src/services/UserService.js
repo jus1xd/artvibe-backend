@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/User.js"; // Подставьте путь к вашей модели пользователя
+import { io } from "../../index.js";
 
 // Функция для добавления друга к пользователю по их ID
 class UserService {
@@ -108,6 +109,7 @@ class UserService {
         username: people.username,
         avatar: people.avatar,
         isOnline: people.isOnline,
+        lastOnline: people.lastOnline,
       }));
 
       return allPeoples;
@@ -137,7 +139,7 @@ class UserService {
   async getUserById(userId) {
     try {
       const currentUser = await User.findById(userId).select(
-        "-password -email"
+        "-password -email -friends.messages"
       ); // Исключаем поля с паролем и почтой
       return currentUser;
     } catch (error) {
@@ -182,7 +184,7 @@ class UserService {
     }
   }
 
-  async sendMessage(id, friendId, messageText) {
+  async sendMessage(id, friendId, messageText, pictures) {
     try {
       const currentUser = await User.findById(id);
       const friendUser = await User.findById(friendId);
@@ -205,6 +207,7 @@ class UserService {
       const newMessage = {
         _id: new mongoose.Types.ObjectId(), // Генерируем новый _id
         text: messageText,
+        pictures: pictures,
         date: new Date().toISOString(),
         friendId: friendId,
         friendName: friendUser.name, // Добавляем friendName
@@ -234,7 +237,15 @@ class UserService {
         throw new Error("Пользователь не найден");
       }
 
-      currentUser.isOnline = isOnline;
+      if (isOnline) {
+        currentUser.isOnline = isOnline;
+      } else {
+        currentUser.isOnline = isOnline;
+        currentUser.lastOnline = new Date().toISOString();
+      }
+
+      io.emit("userOnline", { userId, isOnline });
+
       await currentUser.save();
     } catch (error) {
       throw error;
