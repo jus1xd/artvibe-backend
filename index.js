@@ -29,17 +29,24 @@ app.use(express.static("static"));
 app.use(fileUpload({}));
 app.use("/api", router);
 
+let usersCount = 0;
+
 // socket.io connection
 io.on("connection", (socket) => {
   if (socket.handshake.auth.token) {
+    usersCount++;
     const token = jwt.verify(socket.handshake.auth.token, secret);
 
     UserService.toggleOnlineStatus(token.id, true);
     console.log(token.username, "connected");
 
+    io.emit("onlineUsers", usersCount);
+
     socket.on("disconnect", () => {
+      usersCount--;
       UserService.toggleOnlineStatus(token.id, false);
       console.log(token.username, "disconnected");
+      io.emit("onlineUsers", usersCount);
     });
   } else {
     console.log("Guest connected");

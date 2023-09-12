@@ -101,17 +101,7 @@ class UserService {
 
   async getAllPeoples() {
     try {
-      const peoples = await User.find();
-
-      const allPeoples = peoples.map((people) => ({
-        _id: people._id,
-        name: people.name,
-        username: people.username,
-        avatar: people.avatar,
-        isOnline: people.isOnline,
-        lastOnline: people.lastOnline,
-      }));
-
+      const allPeoples = await User.find().select("_id name avatar isOnline");
       return allPeoples;
     } catch (error) {
       throw error;
@@ -240,11 +230,9 @@ class UserService {
       if (isOnline) {
         currentUser.isOnline = isOnline;
       } else {
-        currentUser.isOnline = isOnline;
+        currentUser.isOnline = false;
         currentUser.lastOnline = new Date().toISOString();
       }
-
-      io.emit("userOnline", { userId, isOnline });
 
       await currentUser.save();
     } catch (error) {

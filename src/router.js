@@ -11,6 +11,8 @@ import PostController from "./controllers/PostController.js";
 
 const router = new Router();
 
+
+
 // эндпоинты для авторов
 router.post("/authors", AuthorController.create);
 router.get("/authors", AuthorController.getAll);
@@ -33,6 +35,7 @@ router.put("/countries", CountryController.update);
 router.delete("/countries/:id", CountryController.delete);
 
 // эндпоинты для пользователей
+router.get("/peoples", UserController.getAllPeoples);
 router.post("/friends", UserController.getFriends);
 router.get("/user/:id", UserController.getUserById);
 router.post("/user-cover", UserController.updateUserCover);
@@ -75,7 +78,6 @@ router.post(
 );
 
 router.get("/users", roleMiddleware("admin"), AuthController.getAll);
-router.get("/peoples", UserController.getAllPeoples);
 router.delete("/users/:id", AuthController.delete);
 
 export default router;
