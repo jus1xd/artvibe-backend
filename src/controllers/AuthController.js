@@ -11,7 +11,8 @@ const generateAccessToken = (id, username, roles) => {
     username,
     roles,
   };
-  return jwt.sign(payload, secret, { expiresIn: "99999999d" });
+  
+  return jwt.sign(payload, secret, { expiresIn: "9999d" });
 };
 
 class AuthController {
@@ -25,11 +26,10 @@ class AuthController {
       }
       const { name, email, username, password } = req.body;
 
-      let avatar = "";
-
-      if (req.files !== null) {
-        avatar = fileService.saveFile(req.files.avatar);
-      }
+      let avatar =
+        req.files && req.files.avatar
+          ? fileService.saveFile(req.files.avatar)
+          : "";
 
       const candidate = await User.findOne({ email });
       if (candidate) {
@@ -39,17 +39,21 @@ class AuthController {
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const user = new User({
-        name,
-        avatar: avatar,
+        fullname: name,
+        avatar,
+        pageCover: "",
         city: "Stary Oscol",
         isOnline: false,
         email,
         username,
         friends: [],
+        posts: [],
         password: hashPassword,
         role: "user",
       });
+
       await user.save();
+      
       const token = generateAccessToken(user._id, user.username, user.role);
       return res.json({ token });
     } catch (e) {

@@ -11,8 +11,6 @@ import PostController from "./controllers/PostController.js";
 
 const router = new Router();
 
-
-
 // эндпоинты для авторов
 router.post("/authors", AuthorController.create);
 router.get("/authors", AuthorController.getAll);
@@ -40,7 +38,7 @@ router.post("/friends", UserController.getFriends);
 router.get("/user/:id", UserController.getUserById);
 router.post("/user-cover", UserController.updateUserCover);
 router.post("/add-friend", UserController.addFriend);
-router.delete("/remove-friend", UserController.removeFriend);
+router.post("/remove-friend", UserController.removeFriend);
 // тут эндопоинты для сообщений
 router.post("/conversation", UserController.getMessagesWithSenderInfo);
 router.post("/send-message", UserController.sendMessage);

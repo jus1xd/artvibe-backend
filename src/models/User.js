@@ -2,7 +2,7 @@ import mongoose, { version } from "mongoose";
 
 const User = new mongoose.Schema(
   {
-    name: {
+    fullname: {
       type: String,
       required: true,
     },
@@ -11,18 +11,21 @@ const User = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
     city: {
       type: String,
       default: "",
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    pageCover: {
+      type: String,
+      default: "",
+    },
+    role: {
+      type: String,
+      required: true,
     },
     isVerified: {
       type: Boolean,
@@ -38,67 +41,37 @@ const User = new mongoose.Schema(
     },
     lastOnline: {
       type: String,
-      default: "",
+      default: Date.now(),
     },
     friends: [
       {
-        idOfFriend: String,
-        name: String,
-        avatar: String,
-        messages: [
-          {
-            text: String,
-            pictures: { type: String, default: "" },
-            date: String,
-            senderId: String, // Идентификатор отправителя сообщения
-            senderName: String, // Имя отправителя сообщения
-            senderAvatar: String, // Аватар отправителя сообщения
-          },
-        ],
+        _id: false,
+        relationId: { type: String, required: true },
+      },
+    ],
+    chats: [
+      {
+        chatId: { type: String, required: true },
       },
     ],
     posts: [
       {
-        text: { type: String, default: "" },
-        pictures: { type: String, default: "" },
-        authorId: { type: String, required: true },
-        authorName: { type: String, required: true },
-        authorAvatar: { type: String, default: "" },
-        createdAt: { type: Date, default: Date.now },
-        likes: [
-          {
-            userId: { type: String },
-            userName: { type: String },
-          },
-        ],
-        comments: [
-          {
-            text: { type: String, default: "" },
-            pictures: { type: String, default: "" },
-            userId: { type: String, required: true },
-            userName: { type: String, required: true },
-            userAvatar: { type: String, default: "" },
-            createdAt: { type: Date, default: Date.now },
-          },
-        ],
+        postId: { type: String, required: true },
       },
     ],
-    avatar: {
+    email: {
       type: String,
-      default: "",
+      unique: true,
+      required: true,
     },
-    pageCover: {
-      type: String,
-      required: false,
-    },
-    role: {
+    password: {
       type: String,
       required: true,
     },
-  },
-  {
-    versionKey: false,
   }
+  // {
+  //   versionKey: true,
+  // }
 );
 
 export default mongoose.model("User", User);

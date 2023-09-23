@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import User from "../models/User.js"; // Подставьте путь к вашей модели пользователя
 import { io } from "../../index.js";
+import Dialog from "../models/Dialog.js";
+import Relation from "../models/Relation.js";
 
 // Функция для добавления друга к пользователю по их ID
 class UserService {
@@ -13,27 +15,48 @@ class UserService {
         throw new Error("Пользователь не найден");
       }
 
-      const isAlreadyFriend = currentUser.friends.some(
-        (friend) => friend._id.toString() === friendId
-      );
+      // ищем связь с другом
+      const relation = Relation.findOne({
+        userId: currentUser._id.toString(),
+        friendId: friendUser._id.toString(),
+      });
 
-      if (isAlreadyFriend) {
+      // если уже в друзьях
+      if (relation.isFriends) {
         throw new Error("Пользователь уже в списке друзей");
       }
 
-      currentUser.friends.push({
-        _id: friendUser._id.toString(),
-        name: friendUser.name,
-        avatar: friendUser.avatar,
-        messages: [],
-      });
+      // если не были в друзьях
+      if (!relation._id) {
+        const newDialog = new Dialog({
+          messages: [],
+        });
 
-      friendUser.friends.push({
-        _id: currentUser._id.toString(),
-        name: currentUser.name,
-        avatar: currentUser.avatar,
-        messages: [],
-      });
+        const newRelation = new Relation({
+          userId: currentUser._id.toString(),
+          friendId: friendUser._id.toString(),
+          dialogId: newDialog._id.toString(),
+          isFriends: true,
+          requestAccepted: false,
+          requestSent: true,
+        });
+
+        currentUser.friends.push({
+          relationId: newRelation._id.toString(),
+        });
+
+        friendUser.friends.push({
+          relationId: newRelation._id.toString(),
+        });
+
+        await newDialog.save();
+        await newRelation.save();
+      } else {
+        console.log("tut", relation._id);
+        // если уже были в друзьях, то принимаем заявку
+        relation.isFriends = true;
+        relation.requestAccepted = true;
+      }
 
       await currentUser.save();
       await friendUser.save();
@@ -43,7 +66,7 @@ class UserService {
         friendUser: friendUser,
       };
     } catch (error) {
-      throw error;
+      throw console.error(error);
     }
   }
 
@@ -56,31 +79,21 @@ class UserService {
         throw new Error("Пользователь не найден");
       }
 
-      const currentUserFriendIndex = currentUser.friends.findIndex(
-        (friend) => friend._id.toString() === friendId
-      );
+      // ищем связь с другом
+      const relation = Relation.findOne({
+        userId: currentUser._id.toString(),
+        friendId: friendUser._id.toString(),
+      });
 
-      if (currentUserFriendIndex === -1) {
-        throw new Error("Пользователь не является другом");
+      console.log("relation", relation.userId);
+
+      if (!relation.isFriends) {
+        throw new Error("Пользователь не в списке друзей");
       }
 
-      const friendUserFriendIndex = friendUser.friends.findIndex(
-        (friend) => friend._id.toString() === userId
-      );
+      relation.isFriends = false;
 
-      if (friendUserFriendIndex !== -1) {
-        friendUser.friends.splice(friendUserFriendIndex, 1);
-      }
-
-      currentUser.friends.splice(currentUserFriendIndex, 1);
-
-      await currentUser.save();
-      await friendUser.save();
-
-      return {
-        currentUser: currentUser,
-        friendUser: friendUser,
-      };
+      await relation.save();
     } catch (error) {
       throw error;
     }
@@ -89,11 +102,16 @@ class UserService {
   async getFriends(userId) {
     try {
       const currentUser = await User.findById(userId);
+
       if (!currentUser) {
         throw new Error("Пользователь не найден");
       }
 
-      return currentUser.friends;
+      const relations = await Relation.find(
+        currentUser.friends.relationId
+      ).select("-_id userId friendId");
+
+      return relations;
     } catch (error) {
       throw error;
     }
@@ -101,7 +119,9 @@ class UserService {
 
   async getAllPeoples() {
     try {
-      const allPeoples = await User.find().select("_id name avatar isOnline");
+      const allPeoples = await User.find().select(
+        "_id fullname avatar isOnline"
+      );
       return allPeoples;
     } catch (error) {
       throw error;
@@ -224,7 +244,7 @@ class UserService {
       const currentUser = await User.findById(userId);
 
       if (!currentUser) {
-        throw new Error("Пользователь не найден");
+        console.log("Пользователь не найден");
       }
 
       if (isOnline) {
@@ -236,7 +256,7 @@ class UserService {
 
       await currentUser.save();
     } catch (error) {
-      throw error;
+      console.error(error);
     }
   }
 }
